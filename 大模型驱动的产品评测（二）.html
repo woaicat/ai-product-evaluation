@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大模型驱动产品评测方案调研</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;600;700&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Tinos', serif;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f5f1;
+            border-radius: 15px;
+            border-top: 4px solid #2E8B57;
+            border-bottom: 4px solid #2E8B57;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2E8B57;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+            font-weight: 400;
+        }
+
+        .section {
+            background: #f8f5f1;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #dcdcdc;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #2E8B57;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .section-title {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2E8B57;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #2E8B57;
+            padding-bottom: 10px;
+        }
+
+        .subsection {
+            margin-bottom: 25px;
+        }
+
+        .subsection-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .subsection-title::before {
+            content: "▶";
+            color: #2E8B57;
+            margin-right: 10px;
+            font-size: 0.8em;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 3px solid #2E8B57;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .role-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2E8B57;
+            margin-bottom: 15px;
+        }
+
+        .role-description {
+            font-size: 0.95em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .task-list li::before {
+            content: "●";
+            color: #2E8B57;
+            position: absolute;
+            left: 0;
+        }
+
+        .task-category {
+            font-weight: 600;
+            color: #333;
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .metrics-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .metrics-table th {
+            background: #2E8B57;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .metrics-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #dcdcdc;
+        }
+
+        .metrics-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metrics-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #2E8B57 0%, #3a9d6a 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .highlight-box .author {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .phase-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .phase-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            border-top: 3px solid #2E8B57;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .phase-number {
+            background: #2E8B57;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .phase-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .phase-content {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .tag {
+            display: inline-block;
+            background: #2E8B57;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin: 2px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .phase-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>大模型驱动的产品评测方案（二）</h1>
+            <p>谁来评  评什么</p>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">不同岗位人员的分工</h2>
+            
+            <div class="role-grid">
+                <div class="role-card">
+                    <div class="role-title">🎯 产品经理</div>
+                    <div class="role-description">评测的发起者和需求的源头，负责定义业务目标和决策方向。</div>
+                    
+                    <div class="task-category">评测设计阶段：</div>
+                    <ul class="task-list">
+                        <li>定义业务目标与北极星指标</li>
+                        <li>定义用户场景和核心诉求</li>
+                        <li>设定质量门槛标准</li>
+                        <li>明确主观指标的判断标准</li>
+                    </ul>
+                    
+                    <div class="task-category">结果分析与决策：</div>
+                    <ul class="task-list">
+                        <li>解读业务价值和商业影响</li>
+                        <li>决定产品发布或优化方向</li>
+                        <li>划分问题修复优先级</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-title">🔬 业务/领域专家</div>
+                    <div class="role-description">评测质量的基石，提供专业领域的权威判断和标准。</div>
+                    
+                    <div class="task-category">评测设计阶段：</div>
+                    <ul class="task-list">
+                        <li>提供高质量的评测数据</li>
+                        <li>定义领域内的"红线"标准</li>
+                        <li>设计"陷阱"问题和边缘案例</li>
+                    </ul>
+                    
+                    <div class="task-category">评测执行阶段：</div>
+                    <ul class="task-list">
+                        <li>进行专业内容的人工评测</li>
+                        <li>提供定性反馈和改进建议</li>
+                        <li>标注"黄金数据"</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-title">💻 开发人员</div>
+                    <div class="role-description">评测的技术支撑和执行主体，负责技术实现和问题修复。</div>
+                    
+                    <div class="task-category">技术支撑：</div>
+                    <ul class="task-list">
+                        <li>构建评测工具与平台</li>
+                        <li>实现自动化评测流水线</li>
+                        <li>提供技术指标建议</li>
+                    </ul>
+                    
+                    <div class="task-category">执行与优化：</div>
+                    <ul class="task-list">
+                        <li>分析技术根因和bad case</li>
+                        <li>进行模型选型和优化</li>
+                        <li>修复识别出的问题</li>
+                    </ul>
+                </div>
+
+                <div class="role-card">
+                    <div class="role-title">🧪 测试人员</div>
+                    <div class="role-description">AI质量保障的组织者和度量者，确保评测过程的科学性。</div>
+                    
+                    <div class="task-category">评测管理：</div>
+                    <ul class="task-list">
+                        <li>设计评测方案与流程</li>
+                        <li>管理评测数据集版本</li>
+                        <li>组织协调评测活动</li>
+                    </ul>
+                    
+                    <div class="task-category">质量保障：</div>
+                    <ul class="task-list">
+                        <li>聚合呈现评测结果</li>
+                        <li>执行回归测试</li>
+                        <li>设计边界条件测试用例</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">评估指标选择：从目标和任务出发</h2>
+            
+            <div class="highlight-box">
+                <div class="author">安德里亚·卡帕西（Andrej Karpathy）：</div>
+                <div>"优质的评估体系很难搭建，在特斯拉时，我大概要把三分之一的时间花在数据上，三分之一花在评估上，剩下三分之一花在其他所有事上。评估体系必须全面、有代表性、高质量，还要能衡量梯度信号。"</div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">具体任务指标（说明产品能不能用）</h3>
+                
+                <div style="margin: 20px 0;">
+                    <strong>核心问题：</strong>你构建的产品输出的结果是否存在正确答案？
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 15px;">✅ 存在正确答案</h4>
+                        <div style="margin-bottom: 15px;">
+                            <span class="tag">分类任务</span>
+                            <span class="tag">信息抽取</span>
+                        </div>
+                        <ul class="task-list">
+                            <li><strong>精确率 (Precision)</strong>：衡量"别误判"</li>
+                            <li><strong>召回率 (Recall)</strong>：衡量"别漏判"</li>
+                            <li><strong>F1-Score</strong>：综合性指标</li>
+                            <li><strong>精确匹配 (Exact Match)</strong>：完全一致性</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 10px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 15px;">🎨 不存在唯一正确答案</h4>
+                        <div style="margin-bottom: 15px;">
+                            <span class="tag">创作任务</span>
+                            <span class="tag">开放对话</span>
+                        </div>
+                        <ul class="task-list">
+                            <li><strong>正确性</strong>：事实准确性</li>
+                            <li><strong>忠实度</strong>：遵循源信息</li>
+                            <li><strong>相关性</strong>：切题程度</li>
+                            <li><strong>完整性</strong>：信息覆盖度</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <table class="metrics-table">
+                    <thead>
+                        <tr>
+                            <th>维度</th>
+                            <th>核心指标</th>
+                            <th>含义</th>
+                            <th>衡量方法</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td rowspan="5"><strong>输出质量</strong></td>
+                            <td>正确性</td>
+                            <td>事实准确性</td>
+                            <td>人工/自动化对比验证</td>
+                        </tr>
+                        <tr>
+                            <td>忠实度</td>
+                            <td>遵循源信息，控制幻觉</td>
+                            <td>与源文档比对一致性</td>
+                        </tr>
+                        <tr>
+                            <td>相关性</td>
+                            <td>直接回应用户意图</td>
+                            <td>人工打分（1-5分）</td>
+                        </tr>
+                        <tr>
+                            <td>完整性</td>
+                            <td>覆盖问题重要方面</td>
+                            <td>判断关键信息遗漏</td>
+                        </tr>
+                        <tr>
+                            <td>简洁性</td>
+                            <td>言简意赅，无冗余</td>
+                            <td>字数统计+人工判断</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="3"><strong>风险与安全</strong></td>
+                            <td>幻觉率</td>
+                            <td>编造事实的比例</td>
+                            <td>设计陷阱问题检测</td>
+                        </tr>
+                        <tr>
+                            <td>偏见</td>
+                            <td>刻板印象或歧视</td>
+                            <td>模板化提示词测试</td>
+                        </tr>
+                        <tr>
+                            <td>安全合规</td>
+                            <td>避免有害内容</td>
+                            <td>关键词过滤+分类器</td>
+                        </tr>
+                        <tr>
+                            <td rowspan="4"><strong>体验与风格</strong></td>
+                            <td>连贯性</td>
+                            <td>逻辑清晰，上下文连贯</td>
+                            <td>阅读体验流畅度</td>
+                        </tr>
+                        <tr>
+                            <td>语气风格</td>
+                            <td>符合产品定位</td>
+                            <td>品牌风格指南对比</td>
+                        </tr>
+                        <tr>
+                            <td>可读性</td>
+                            <td>易于理解，排版清晰</td>
+                            <td>可读性算法+人工评估</td>
+                        </tr>
+                        <tr>
+                            <td>延迟</td>
+                            <td>响应速度</td>
+                            <td>后台监控时间消耗</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">用户/业务指标（决定产品有没有价值）</h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 10px;">📊 用户满意度</h4>
+                        <ul class="task-list" style="font-size: 0.9em;">
+                            <li>净推荐值 (NPS)</li>
+                            <li>客户满意度评分 (CSAT)</li>
+                            <li>点击"顶/踩"反馈</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 10px;">🎯 答案采纳率</h4>
+                        <ul class="task-list" style="font-size: 0.9em;">
+                            <li>代码建议接受比例</li>
+                            <li>文案复制下载比例</li>
+                            <li>无需转人工比例</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 10px;">⚡ 效率提升</h4>
+                        <ul class="task-list" style="font-size: 0.9em;">
+                            <li>任务平均完成时长</li>
+                            <li>任务吞吐量提升</li>
+                            <li>处理能力增长</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: white; padding: 15px; border-radius: 8px; border-left: 3px solid #2E8B57;">
+                        <h4 style="color: #2E8B57; margin-bottom: 10px;">💰 成本降低</h4>
+                        <ul class="task-list" style="font-size: 0.9em;">
+                            <li>人工成本减少</li>
+                            <li>财务支出降低</li>
+                            <li>运营成本优化</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3 class="subsection-title">北极星指标：产品生命周期导向</h3>
+                
+                <div class="phase-cards">
+                    <div class="phase-card">
+                        <div class="phase-number">1</div>
+                        <div class="phase-title">探索期 / MVP</div>
+                        <div class="phase-content">
+                            <strong>目标：</strong>验证核心功能可行性<br>
+                            <strong>北极星指标：</strong>答案采纳率 或 任务成功率<br>
+                            <strong>关注点：</strong>"这个东西到底有没有用？"
+                        </div>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <div class="phase-number">2</div>
+                        <div class="phase-title">成长期 / 优化期</div>
+                        <div class="phase-content">
+                            <strong>目标：</strong>提升用户体验，扩大规模<br>
+                            <strong>北极星指标：</strong>用户满意度 或 日活跃用户数<br>
+                            <strong>关注点：</strong>用户愿意持续使用并推荐
+                        </div>
+                    </div>
+                    
+                    <div class="phase-card">
+                        <div class="phase-number">3</div>
+                        <div class="phase-title">成熟期</div>
+                        <div class="phase-content">
+                            <strong>目标：</strong>最大化产品价值<br>
+                            <strong>北极星指标：</strong>业务效率提升 或 付费转化率<br>
+                            <strong>关注点：</strong>实实在在的"降本增效"
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; padding: 20px; background: #f8f5f1; border-radius: 10px; border: 1px solid #dcdcdc;">
+            <p style="color: #666; font-size: 0.9em;">构建科学的AI产品评测体系，让每一次迭代都有据可依</p>
+        </div>
+    </div>
+</body>
+</html>

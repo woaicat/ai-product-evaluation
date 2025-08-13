@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>评测环节与Agent评测</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;600;700&family=Tinos:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Tinos', serif;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e8e8e8 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f5f1;
+            border-radius: 15px;
+            border-top: 4px solid #2E8B57;
+            border-bottom: 4px solid #2E8B57;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #2E8B57;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: #f8f5f1;
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid #2E8B57;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .section h2 {
+            font-size: 2em;
+            font-weight: 700;
+            color: #2E8B57;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #2E8B57;
+            padding-bottom: 10px;
+        }
+
+        .section h3 {
+            font-size: 1.6em;
+            font-weight: 600;
+            color: #2E8B57;
+            margin: 25px 0 15px 0;
+        }
+
+        .section h4 {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin: 20px 0 10px 0;
+        }
+
+        .process-steps {
+            background: linear-gradient(135deg, #f8f5f1 0%, #f0f0f0 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .process-steps ol {
+            padding-left: 20px;
+        }
+
+        .process-steps li {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: #333;
+        }
+
+        .stage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stage-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2E8B57;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stage-card h4 {
+            color: #2E8B57;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .stage-card .goal {
+            background: #e8f5e8;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .stage-card .activities {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .test-activity {
+            background: white;
+            margin: 20px 0;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #2E8B57;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .test-activity h4 {
+            color: #2E8B57;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+        }
+
+        .test-activity .subtitle {
+            color: #888;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+
+        .test-activity ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .test-activity li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .benchmark-table th {
+            background: #2E8B57;
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .benchmark-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .benchmark-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .benchmark-table tr:hover {
+            background: #e8f5e8;
+        }
+
+        .evaluation-dimensions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .dimension-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-top: 4px solid #2E8B57;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .dimension-card h4 {
+            color: #2E8B57;
+            margin-bottom: 10px;
+        }
+
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .challenge-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #d32f2f;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+        }
+
+        .challenge-card h4 {
+            color: #d32f2f;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .challenge-card ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            font-size: 0.9em;
+        }
+
+        .product-table th {
+            background: #2E8B57;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .product-table td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        .product-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #2E8B57;
+        }
+
+        .recommendations {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f0f8f0 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border-left: 4px solid #2E8B57;
+        }
+
+        .recommendations h4 {
+            color: #2E8B57;
+            margin-bottom: 15px;
+        }
+
+        .recommendations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendations li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .recommendations li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #2E8B57;
+            font-weight: bold;
+        }
+
+        .references {
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .references h4 {
+            color: #2E8B57;
+            margin-bottom: 15px;
+        }
+
+        .references ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .references li {
+            margin-bottom: 8px;
+        }
+
+        .references a {
+            color: #2E8B57;
+            text-decoration: none;
+            font-size: 0.9em;
+        }
+
+        .references a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .stage-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .challenge-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .evaluation-dimensions {
+                grid-template-columns: 1fr;
+            }
+
+            .benchmark-table, .product-table {
+                font-size: 0.8em;
+            }
+
+            .benchmark-table th, .benchmark-table td,
+            .product-table th, .product-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>评测环节与Agent评测</h1>
+            <p>从产品构思到生产维护的全生命周期评测；Agent评测拓展</p>
+        </div>
+
+        <div class="section">
+            <h2>7. 评测环节和测试活动</h2>
+            <p>构建一个大模型应用都有哪些环节需要进行评测，需要进行什么样的测试？</p>
+            
+            <div class="process-steps">
+                <p><strong>从最初的产品构思到生产环境的维护，在每个阶段都需要评估，这些工作流程环环相扣：</strong></p>
+                <ol>
+                    <li>从方案选型开始，找到最佳方案</li>
+                    <li>在发布前进行压力测试和红队测试，为各种情况做准备</li>
+                    <li>应用上线后，安全护栏可以帮助预防重大问题</li>
+                    <li>产品投放市场后，通过生产可观察性持续监控实时数据</li>
+                    <li>如果出现问题，修复后运行回归测试，然后推出更新</li>
+                </ol>
+            </div>
+
+            <h3>7.1 评测环节</h3>
+            <div class="stage-grid">
+                <div class="stage-card">
+                    <h4>开发与实验阶段</h4>
+                    <div class="goal"><strong>目标：</strong>快速迭代、深度调试、方案探索</div>
+                    <div class="activities"><strong>核心活动：</strong>方案选型、调试Prompt、对比不同模型/参数下的效果</div>
+                </div>
+                <div class="stage-card">
+                    <h4>集成测试阶段</h4>
+                    <div class="goal"><strong>目标：</strong>保证代码和核心功能不衰退</div>
+                    <div class="activities"><strong>核心活动：</strong>运行单元测试、回归测试，设置质量门禁</div>
+                </div>
+                <div class="stage-card">
+                    <h4>离线基准评估阶段</h4>
+                    <div class="goal"><strong>目标：</strong>在应用版本上线前，进行全面的性能评估</div>
+                    <div class="activities"><strong>核心活动：</strong>在"黄金测试集"上运行端到端评估，生成量化性能报告</div>
+                </div>
+                <div class="stage-card">
+                    <h4>在线生产监控阶段</h4>
+                    <div class="goal"><strong>目标：</strong>实时监控线上性能，检测异常和漂移，收集真实反馈</div>
+                    <div class="activities"><strong>核心活动：</strong>监控关键业务指标（如任务成功率）、技术指标（延迟、Token消耗）、数据分布变化，进行失败模式分析</div>
+                </div>
+            </div>
+
+            <h3>7.2 测试活动</h3>
+            
+            <div class="test-activity">
+                <h4>选型测试</h4>
+                <div class="subtitle">为AI产品选择最佳的模型、提示词或其他配置</div>
+                <p>项目刚开始时，第一步通常是进行技术方案选型，首先要为任务选择一个模型，可以查看模型排行榜挑选几个候选LLM，并在具体任务上进行测试。另一个常见的选型任务是找到最佳提示词，对比不同提示词下的输出效果。</p>
+            </div>
+
+            <div class="test-activity">
+                <h4>压力测试</h4>
+                <div class="subtitle">通过评估产品在各种场景下的表现，检查它是否为实际上线使用做好了准备</div>
+                <p>压力测试旨在检查当前版本的产品是否足够健壮，能否应对用户可能抛出的各种问题。系统可能在十几个测试用例数据上运行良好，但几百、几千个呢？压力测试需要更多的测试数据，既要覆盖常见的场景，也要考察系统如何处理更棘手的边缘情况。</p>
+                <ul>
+                    <li>如果用户的输入只有一个词怎么办？如果太长了呢？</li>
+                    <li>如果输入用的是另一种语言或包含错别字呢？</li>
+                    <li>系统如何处理它不应涉及的敏感话题？</li>
+                </ul>
+                <p>设计这些测试需要深入了解用户如何与产品互动，尽可能对每个主题或场景都进行测试。</p>
+            </div>
+
+            <div class="test-activity">
+                <h4>红队测试</h4>
+                <div class="subtitle">测试我们的系统如何响应对抗性行为或恶意输入</div>
+                <p>红队测试是一种模拟攻击的测试技术，例如通过提示注入等方式，发现系统中的漏洞。这是评估高风险应用安全性的关键步骤，专门针对滥用或者故意的有害行为。它寻找的是恶意用户如何利用系统缺陷，将行为推向不安全或意外（如提供有害建议）的方法。</p>
+                <p>例如，对于一个医疗聊天机器人，测试它如何安全地处理医疗问题属于核心功能范围。但对于一个产品客服机器人，医疗、金融或法律问题就超出了预期用途，可被视为对抗性输入。</p>
+                <p>红队测试可以手动进行，也可以通过合成数据和有针对性的提示来自动化地模拟各种风险。</p>
+            </div>
+
+            <div class="test-activity">
+                <h4>生产环境可观察性</h4>
+                <div class="subtitle">了解系统在生产环境中的实时性能，以便检测和解决问题</div>
+                <p>在测试环境中评估终究有限。当产品面向真实用户后，需要了解它在实际使用中的表现。这就引出了生产环境可观察性。一旦产品上线，就需要追踪性能。</p>
+                <p>可以从追踪用户行为开始，比如收集点击率或点赞/点踩等反馈。但要获得更深入的洞察，就需要追踪用户提出的问题以及系统如何响应。收集跟踪记录所有交互的详细日志。</p>
+                <ul>
+                    <li>用户体验好吗？回答是否准确、安全？</li>
+                </ul>
+                <p>有了这些日志数据，就可以通过运行在线评估来评价生产环境中的质量。</p>
+            </div>
+
+            <div class="test-activity">
+                <h4>回归测试</h4>
+                <div class="subtitle">测试新的改动是否在改进系统的同时，没有破坏以前正常工作的功能</div>
+                <p>回归测试能验证所做的更改或优化没有引入新的（或旧的）问题。</p>
+                <ul>
+                    <li>修复一个问题后，会不会影响其他功能？</li>
+                    <li>微调一个提示后，有多少以前的输出会改变？这些改变是好是坏？</li>
+                </ul>
+                <p>系统化的回归测试可以安全地在现有系统之上进行迭代，确保在做出改进的同时，没有引入新的问题。</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>8. Agent评测</h2>
+            
+            <h3>基准测试</h3>
+            <p>为了系统性地评估Agent的核心能力，学术界和开源社区开发了一系列标准化基准测试。</p>
+            
+            <div class="evaluation-dimensions">
+                <div class="dimension-card">
+                    <h4>AgentBench</h4>
+                    <p>这是一个全面的基准测试，旨在评估LLM Agent在8个不同交互环境中的推理和决策能力，这些环境包括操作系统、数据库、知识图谱和网页浏览等。AgentBench的测试特别关注Agent的长期推理、决策制定和指令遵循能力，并指出这三点是当前开发可用LLM Agent的主要障碍。</p>
+                </div>
+                <div class="dimension-card">
+                    <h4>WebArena</h4>
+                    <p>该基准专注于评估自主Agent在真实Web环境中执行任务的能力，涵盖电子商务、社交论坛、代码协作和内容管理等领域。它评估的是"功能正确性"，即只要Agent最终达成了目标，无论其采取何种路径都被视为成功。</p>
+                </div>
+                <div class="dimension-card">
+                    <h4>GAIA</h4>
+                    <p>这是一个为通用AI助手设计的基准，其任务源于真实世界的问题，需要综合运用推理、多模态处理和工具使用能力。任务根据所需的步骤和工具数量被划分为不同难度等级。</p>
+                </div>
+                <div class="dimension-card">
+                    <h4>MINT</h4>
+                    <p>该基准专门评估Agent在多轮交互中，使用工具并根据自然语言反馈进行调整的能力。</p>
+                </div>
+            </div>
+
+            <table class="benchmark-table">
+                <thead>
+                    <tr>
+                        <th>基准名称</th>
+                        <th>核心关注点</th>
+                        <th>代表性任务</th>
+                        <th>关键评估标准</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>AgentBench</strong></td>
+                        <td>多环境下的推理与决策</td>
+                        <td>数据库(SQL)操作、网页购物、操作系统交互</td>
+                        <td>任务成功率、指令遵循能力</td>
+                    </tr>
+                    <tr>
+                        <td><strong>WebArena</strong></td>
+                        <td>真实Web环境下的自主任务执行</td>
+                        <td>论坛管理、电商网站浏览、内容管理系统操作</td>
+                        <td>功能正确性（是否达成最终目标）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>GAIA</strong></td>
+                        <td>通用AI助手的多模态与工具使用</td>
+                        <td>科学问答、日常个人任务、处理带附件的问题</td>
+                        <td>任务完成度（分难度等级）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>MINT</strong></td>
+                        <td>多轮交互、工具使用与语言反馈</td>
+                        <td>推理问答、代码生成、决策制定</td>
+                        <td>多轮交互下的任务解决能力</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Agent评估的多维视角</h3>
+            <p>除了基准测试，内部团队在开发处理特定需求的Agent时，需要一个更灵活、更具针对性的评估框架。LangSmith平台推广的评估理念为此提供了一个实用的评估方法，它将Agent评估分解为三个不同的粒度：</p>
+            
+            <div class="evaluation-dimensions">
+                <div class="dimension-card">
+                    <h4>1. 评估最终响应</h4>
+                    <p>这是最简单的评估方式，将Agent视为一个"黑箱"，仅判断其最终输出的答案是否正确或有用。这种方法易于实施，但诊断能力最弱，无法揭示失败的根本原因。</p>
+                </div>
+                <div class="dimension-card">
+                    <h4>2. 评估单个步骤</h4>
+                    <p>这种方法将Agent的行为轨迹分解，对其中的每一个独立动作进行评估。例如，在某一步中，"Agent是否选择了正确的工具？"或"它为该工具提供的参数是否合理？"。这种细粒度的评估对于精确定位和调试错误至关重要。</p>
+                </div>
+                <div class="dimension-card">
+                    <h4>3. 评估完整轨迹</h4>
+                    <p>这是最全面的评估方式，旨在评估Agent为得出结论而采取的整个行动序列（即思考链和工具调用链）。它不仅关心结果，更关心过程的效率和逻辑性。这对于那些解决路径与最终答案同等重要的复杂任务来说至关重要。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>9. 大模型应用评测的挑战和风险</h2>
+            
+            <div class="challenge-grid">
+                <div class="challenge-card">
+                    <h4>1. 高昂的评测成本与定制化难题</h4>
+                    <p>不同的应用形态（RAG、Agent、任务驱动型工作流）对评测的需求千差万别，难以建立一套统一的评测方案。</p>
+                    <p><strong>几乎需要为每一个大模型驱动的产品：</strong></p>
+                    <ul>
+                        <li>定制个性化的评测指标</li>
+                        <li>构建高质量的测试数据集</li>
+                        <li>进行精细的人工标注</li>
+                    </ul>
+                    <p>这些都需要投入大量的时间和人力成本。这种"千应用千面"的特性使得评测体系的建设本身变成了一个复杂的工程项目。</p>
+                </div>
+                
+                <div class="challenge-card">
+                    <h4>2. 大模型评测的可靠性与信任问题</h4>
+                    <p>对于事实性、逻辑一致性等复杂任务的自动化评估，目前最主流的"LLM即裁判"方法本身引入了新的不确定性。</p>
+                    <p><strong>研究和实践表明：</strong>裁判LLM存在位置偏见（倾向于选择第一个选项）、冗长偏见（偏爱更长的回答）和自我增强偏见（偏爱同源模型的输出）。</p>
+                    <p>这种不稳定性导致评测结果有时难以复现，使得团队难以完全信任自动化给出的分数，从而在关键决策上仍倾向于依赖昂贵的人工审核。</p>
+                </div>
+                
+                <div class="challenge-card">
+                    <h4>3. 对复杂智能体行为的评估覆盖不足</h4>
+                    <p>当前的评测框架和指标大多擅长评估"单轮"或"无状态"的生成任务质量。对于复杂的智能体（Agent）应用，其质量不仅取决于最终的输出，更取决于其过程的合理性——包括任务规划的逻辑性、工具选择的准确性、对环境反馈的适应性以及在多轮交互中的状态保持能力。</p>
+                    <p>如何有效、自动化地评估这些动态的、过程性的行为，是当前评测领域的一个前沿挑战。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>10. 附录</h2>
+            
+            <h3>不同产品的评测参考样表</h3>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>产品</th>
+                        <th>任务</th>
+                        <th>指标</th>
+                        <th>指标计算方法</th>
+                        <th>数据集构成</th>
+                        <th>评测方法</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="product-name">金融: 信贷报告自动分析</td>
+                        <td>从个人或企业的信贷报告 (PDF/扫描件) 中提取关键财务数据, 总结风险点, 并生成初步风险评估报告</td>
+                        <td>1. 关键信息提取准确率<br>2. 风险点召回率<br>3. 报告事实性<br>4. 数值一致性</td>
+                        <td>1. (正确提取的字段数) / (总应提取字段数)<br>2. (AI发现的真实风险点数) / (专家发现的总风险点数)<br>3. 人工判断报告中的每句是否完全基于原文<br>4. 自动化脚本检查数字匹配</td>
+                        <td>输入: 信贷报告扫描件/PDF<br>模型输出: 结构化财务数据、风险点摘要、风险评估报告<br>正确答案: 人工标注的关键数据、专家识别的风险点列表</td>
+                        <td>人工专家审核 (信贷分析师最终审核)<br>自动化脚本 (校验数值一致性和数据格式)</td>
+                    </tr>
+                    <tr>
+                        <td class="product-name">金融: 智能投研助手</td>
+                        <td>监控市场新闻、财报和公告, 根据分析师设定的策略, 自动生成投资研究摘要和情绪分析</td>
+                        <td>1. 摘要覆盖度<br>2. 情绪分析准确率<br>3. 策略相关性</td>
+                        <td>1. 人工判断摘要是否覆盖原文核心观点 (1-5分)<br>2. (AI判断正确的情绪类别数) / (总新闻数)<br>3. 分析师判断摘要与预设策略相关性 (1-5分)</td>
+                        <td>输入: 实时金融新闻流、公司财报PDF、分析师策略<br>模型输出: 新闻摘要、情绪标签、策略要点<br>正确答案: 资深分析师撰写的摘要、标注的情绪</td>
+                        <td>金融分析师盲评<br>历史数据回测 (模拟交易表现)</td>
+                    </tr>
+                    <tr>
+                        <td class="product-name">金融: 财富管理客户沟通</td>
+                        <td>根据客户画像和近期市场动态, 为理财经理生成发送给客户的沟通初稿</td>
+                        <td>1. 合规性<br>2. 个性化程度<br>3. 语气一致性<br>4. 采纳率</td>
+                        <td>1. 合规专家判断是否包含违禁词<br>2. 理财经理给个性化程度打分 (1-5分)<br>3. 理财经理判断语气是否符合风格<br>4. (经理发送的AI草稿数) / (AI生成的总草稿数)</td>
+                        <td>输入: 客户画像、市场动态数据、理财经理过往沟通记录<br>模型输出: 沟通文案初稿<br>正确答案: 合规条款列表、理财经理最终修改稿</td>
+                        <td>合规部门审核 (必备流程)<br>理财经理主观打分<br>平台使用数据分析</td>
+                    </tr>
+                    <tr>
+                        <td class="product-name">B2B SaaS: 销售电话分析系统</td>
+                        <td>分析销售人员与客户的通话录音, 自动填充CRM, 并根据预设评估销售技巧</td>
+                        <td>1. CRM字段填充准确率<br>2. 关键意图识别召回率<br>3. 销售技巧符合度<br>4. 摘要客观性</td>
+                        <td>1. (AI自动填充正确的CRM字段数) / (应填充的总字段数)<br>2. (AI识别出的真实客户意图数) / (人工听出的总客户意图数)<br>3. 销售主管对AI评估报告打分 (1-5分)<br>4. 判断摘要是否只包含通话事实 (1-5分)</td>
+                        <td>输入: 销售通话录音、客户CRM历史记录<br>模型输出: 结构化通话摘要、CRM字段、销售技巧评估报告<br>正确答案: 人工整理的通话摘要和CRM信息</td>
+                        <td>销售主管抽样复核与CRM数据交叉验证<br>用户 (销售) 反馈</td>
+                    </tr>
+                    <tr>
+                        <td class="product-name">B2B LegalTech: 法律合同智能比对</td>
+                        <td>比对两份合同版本的差异, 识别新增、删除、修改的条款, 并对高风险条款进行提示</td>
+                        <td>1. 差异识别精确率<br>2. 差异识别召回率<br>3. 风险条款提示准确率</td>
+                        <td>1. (AI识别的真实差异点数) / (AI识别的总差异点数)<br>2. (AI识别的真实差异点数) / (两个版本间的真实差异点数)<br>3. (AI提示的真实风险条款数) / (AI提示的总风险条款数)</td>
+                        <td>输入: 合同A版本、合同B版本<br>模型输出: 标记差异的合并文件、风险条款列表及解释<br>正确答案: 资深律师手动比对出的差异点、标注的风险条款</td>
+                        <td>律师团队专业评测 (法律场景下专家意见是唯一标准)<br>与传统软件比对</td>
+                    </tr>
+                    <tr>
+                        <td class="product-name">B2B 内部: 问答机器人</td>
+                        <td>基于内部文档回答员工问题，并提供来源</td>
+                        <td>1. 事实一致性<br>2. 答案相关性<br>3. 失败兜底率</td>
+                        <td>1. LLM-as-a-judge: 判断[答案]是否完全被[上下文]所支持<br>2. LLM-as-a-judge: 判断[答案]是否直接回答了[问题] (1-5分)<br>3. (转人工或承认无法回答的次数) / (所有无法直接回答问题的总次数)</td>
+                        <td>输入: 员工问题<br>模型输出: 生成的答案、引用的原文片段<br>正确答案: 专家撰写的标准答案、应引用的正确文档</td>
+                        <td>RAG评测框架高效迭代<br>人工抽样审核 (深度分析Bad Case)<br>用户满意度打分</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="recommendations">
+                <h4>建议</h4>
+                <ul>
+                    <li><strong>没有单一的万能指标：</strong> 成功的产品评测，永远是一个包含多个维度的指标矩阵</li>
+                    <li><strong>"事实性"是基础：</strong> 对于非虚构类应用，（事实一致性）是最基础且重要的指标之一</li>
+                    <li><strong>测试与生产结合：</strong> 评测需要在两个场景下进行。测试环境中进行评测保证了模型在上线前的基本质量和安全性；生产环境中进行在线评测（如A/B测试和用户行为分析）则反映了产品在真实世界中的最终价值</li>
+                    <li><strong>人机协同：</strong> 好的评测方法总是自动化和人工评测的组合。自动化保证效率和规模，人工评测保证质量和深度，专家评测是定义"好"的黄金标准</li>
+                    <li><strong>数据集是核心资产：</strong> 高质量、贴近真实场景的评测数据集，是整个评测体系中最为核心和宝贵的资产，需要持续构建和迭代</li>
+                </ul>
+            </div>
+
+            <div class="references">
+                <h4>参考材料</h4>
+                <ul>
+                    <li><a href="https://docs.ragas.io/en/stable/" target="_blank">https://docs.ragas.io/en/stable/</a></li>
+                    <li><a href="https://github.com/confident-ai/deepeval" target="_blank">https://github.com/confident-ai/deepeval</a></li>
+                    <li><a href="https://www.trulens.org/" target="_blank">https://www.trulens.org/</a></li>
+                    <li><a href="https://www.evidentlyai.com/" target="_blank">https://www.evidentlyai.com/</a></li>
+                    <li><a href="https://arize.com/" target="_blank">https://arize.com/</a></li>
+                    <li><a href="https://www.langchain.com/langsmith" target="_blank">https://www.langchain.com/langsmith</a></li>
+                    <li><a href="https://github.com/THUDM/AgentBench" target="_blank">https://github.com/THUDM/AgentBench</a></li>
+                    <li><a href="https://webarena.dev/" target="_blank">https://webarena.dev/</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
